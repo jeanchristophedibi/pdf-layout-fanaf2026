@@ -1,0 +1,90 @@
+ prepare une interface de connexion par email et otp, et une recherche multiselect, je te mettrai à disposition les api d'ici là:
+
+1. Authentification / Connexion
+Base URL : ${NEXT_PUBLIC_API_BASE_URL}/api/v1
+
+Méthode	Endpoint	Description
+POST	/api/v1/auth/login	Login (étape 1 - envoi OTP)
+POST	/api/v1/auth/confirm-login	Confirmation OTP (étape 2)
+GET	/api/v1/auth/me	Profil utilisateur connecté
+POST	/api/v1/admin-auth/password-reset/request	Demande de reset mot de passe
+POST	/api/v1/admin-auth/password-reset/reset	Reset mot de passe avec token
+Login (étape 1) - Body :
+
+
+{ "email": "string", "backend_url": "string (optionnel)" }
+Confirm Login (étape 2) - Body :
+
+
+{ "email": "string", "code": "string (code OTP 6 chiffres)" }
+Header d'authentification : Authorization: Bearer <token>
+Le token est stocké dans localStorage.fanaf_token et le cookie fanaf_token.
+
+2. Recherche de Participants
+Méthode	Endpoint	Description
+GET	/api/v1/admin/participants	Liste paginée avec filtres
+GET	/api/v1/admin/participants/{id}	Détail d'un participant
+GET	/api/v1/admin/participants/{id}/invitation	Télécharger invitation (PDF)
+GET	/api/v1/admin/participants/speakers	Liste des speakers
+Query params pour la recherche :
+
+q - Recherche textuelle
+page, per_page - Pagination
+type - Filtre type (membre, non-membre, vip, speaker, referent)
+organization - ID organisation
+country - Code pays
+status - Statut (completed, pending)
+has_badge, has_invitation, has_piece_photo, has_invoice - Filtres booléens
+check_in - Statut check-in
+mode_paiement, canal_encaissement - Paiement
+from_date, to_date - Plage de dates
+exclude_vip, payment_completed - Autres filtres
+3. VIP
+Méthode	Endpoint	Description
+GET	/api/v1/admin/participants?user_type=vip	Liste des VIP
+GET	/api/v1/admin/users/exempted	Utilisateurs exemptés (VIP/Speakers)
+POST	/api/v1/admin/agency/users/create-vip-speaker	Créer un VIP/Speaker
+Créer un VIP - Body :
+
+
+{
+  "civility": "mr|mrs|miss|dr|prof",
+  "first_name": "string",
+  "last_name": "string",
+  "email": "string",
+  "country_id": "string",
+  "phone": "string",
+  "job_title": "string",
+  "user_type": "vip|speaker|referent"
+}
+4. Comité d'Organisation
+Méthode	Endpoint	Description
+GET	/api/v1/admin/committee-members	Liste des membres du comité
+POST	/api/v1/admin/committee-members	Créer un membre
+POST	/api/v1/admin/committee-members/generate/badge/{registrationId}?lang=fr	Générer un badge
+Créer un membre - Body :
+
+
+{
+  "civility": "string",
+  "first_name": "string",
+  "last_name": "string",
+  "email": "string",
+  "phone": "string",
+  "passport_number": "string",
+  "country_id": "string",
+  "company_id": "string",
+  "user_post": "string"
+}
+5. Endpoints utilitaires
+Méthode	Endpoint	Description
+GET	/api/v1/common/countries	Liste des pays
+GET	/api/v1/admin/companies	Sociétés membres
+GET	/api/v1/admin/associations	Associations non-membres
+Configuration environnement
+Variable	Usage
+NEXT_PUBLIC_API_BASE_URL	URL de base de l'API
+NEXT_PUBLIC_ENABLE_OTP	Activer/désactiver OTP (true/false)
+NEXT_PUBLIC_LOGIN_BACKEND_GEN	URL backend pour le login
+NEXT_PUBLIC_API_BASE_URL=https://core-f26.asacitechnologies.com
+NEXT_PUBLIC_LOGIN_BACKEND_GEN=laiSh0uaCh9ceitahjaiyieYaikeiceed7weetoThahy2iex2o
